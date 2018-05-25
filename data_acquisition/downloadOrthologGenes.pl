@@ -6,154 +6,28 @@ Also stores the goc_score, wga_coverage
 and is_high_confidence
 =cut
 
+
 use strict;
 use warnings;
-use Bio::EnsEMBL::Registry;
-use Bio::EnsEMBL::Gene;
-use Bio::EnsEMBL::Compara::Homology;
-use Class::Inspector;
 use DBI;
 use Try::Tiny;
-
-sub get_gene_orthologs {
-   
-    # connecting to Ensembl db
-    my $reg = 'Bio::EnsEMBL::Registry';
-
-     $ reg->load_registry_from_db(
-        -host => 'asiadb.ensembl.org',  # Please use the suitable host according to your location
-        -user => 'anonymous'
-    );
-
-    # connecting to the local database
-    my $dbh = DBI->connect("dbi:SQLite:dbname=db.db","","");
-
-    # extracting the values from function arguments
-    my $gene_stable_id = $_[0];
-    
-    # initialize the gene adaptor
-    my $ga = $reg->get_adaptor('human', 'core', 'gene');
-
-    try{
-        # collect the gene
-        my $gene = $ga->fetch_by_stable_id($gene_stable_id);
-    
-        # collect the orthologs of the gene
-        my $orthologs = $gene->get_all_homologous_Genes();
-
-        for(my $i=0; $i<@$orthologs; $i++){
-            
-            my $ortholog_gene_id = $orthologs->[$i]->[0]->stable_id();
-            
-            # testing whether this gene is a mouse gene or not
-            my $sth = $dbh->prepare("SELECT gene_stable_ID from mouseGenes WHERE gene_stable_ID='$ortholog_gene_id'");
-            $sth->execute();
-
-            if(my @row = $sth->fetchrow_array()){
-                
-                my $goc_score = "".$orthologs->[$i]->[1]->goc_score();
-                my $wga_coverage = "".$orthologs->[$i]->[1]->wga_coverage();
-                my $is_high_confidence = "".$orthologs->[$i]->[1]->is_high_confidence();
-                try {
-                    $dbh->do("INSERT INTO OrthologPairs  
-                    (human_gene_id, mouse_gene_id, goc_score, wga_coverage, is_high_confidence) VALUES 
-                    ('$gene_stable_id', '$ortholog_gene_id', '$goc_score', '$wga_coverage', '$is_high_confidence' )");
-                } catch {
-                warn "caught error: $_";
-                };
-            }
-        }
-
-        $dbh->do("UPDATE humanGenes
-                 SET done = '1'
-                 WHERE gene_stable_ID='$gene_stable_id'");
-
-    } catch{
-        warn "caught error: $_";
-
-        $dbh->do("UPDATE humanGenes
-                 SET done = '-1'
-                 WHERE gene_stable_ID='$gene_stable_id'");
-
-    };
-
-    $dbh->disconnect();
-}
-
-sub batch_download
-{
-    my @genes = @{$_[0]};
-
-    # connecting to Ensembl db
-    my $reg = 'Bio::EnsEMBL::Registry';
-
-        $ reg->load_registry_from_db(
-        -host => 'asiadb.ensembl.org',  # Please use the suitable host according to your location
-        -user => 'anonymous'
-    );
-
-    # initialize the gene adaptor
-    my $ga = $reg->get_adaptor('human', 'core', 'gene');
-
-    # connecting to the local database
-    my $dbh = DBI->connect("dbi:SQLite:dbname=db.db","","");
-
-    foreach (@genes)
-    {
-        my $gene_stable_id = $_;
-
-        try{
-            # collect the gene
-            my $gene = $ga->fetch_by_stable_id($gene_stable_id);
-
-            # collect the orthologs of the gene
-            my $orthologs = $gene->get_all_homologous_Genes();
-            
-            for(my $i=0; $i<@$orthologs; $i++){
-                
-                my $ortholog_gene_id = $orthologs->[$i]->[0]->stable_id();
-                
-                # testing whether this gene is a mouse gene or not
-                my $sth = $dbh->prepare("SELECT gene_stable_ID from mouseGenes WHERE gene_stable_ID='$ortholog_gene_id'");
-                $sth->execute();
-
-                if(my @row = $sth->fetchrow_array()){
-                    
-                    my $goc_score = "".$orthologs->[$i]->[1]->goc_score();
-                    my $wga_coverage = "".$orthologs->[$i]->[1]->wga_coverage();
-                    my $is_high_confidence = "".$orthologs->[$i]->[1]->is_high_confidence();
-                    try {
-                        $dbh->do("INSERT INTO OrthologPairs  
-                        (human_gene_id, mouse_gene_id, goc_score, wga_coverage, is_high_confidence) VALUES 
-                        ('$gene_stable_id', '$ortholog_gene_id', '$goc_score', '$wga_coverage', '$is_high_confidence' )");
-                    } catch {
-                    warn "caught error: $_";
-                    };
-                }
-            }
-
-            $dbh->do("UPDATE humanGenes
-                    SET done = '1'
-                    WHERE gene_stable_ID='$gene_stable_id'");
-
-        } catch{
-            warn "caught error: $_";
-
-            $dbh->do("UPDATE humanGenes
-                    SET done = '-1'
-                    WHERE gene_stable_ID='$gene_stable_id'");
-
-        };
-    }
-
-    $dbh->disconnect();
-}
+use Bio::EnsEMBL::Registry;
+use Data::Dumper;
 
 
 sub download_all_orthologs{
 
-    my $dbh = DBI->connect("dbi:SQLite:dbname=db.db","","");
+    my $reg = "Bio::EnsEMBL::Registry";
 
+    $reg->load_registry_from_db(
+    -host => "asiadb.ensembl.org", # Please use the suitable host according to your location
+    -user => "anonymous"
+    );
+
+    # connecting to the local database
+    my $dbh = DBI->connect("dbi:SQLite:dbname=data/db.db","","");
+
+    # create table for ortholog pairs
     try {
         $dbh->do("CREATE TABLE OrthologPairs (human_gene_id VARCHAR(1000),
                                               mouse_gene_id VARCHAR(1000),
@@ -165,28 +39,58 @@ sub download_all_orthologs{
         warn "caught error: $_";
     };
 
-    try {
-        $dbh->do("ALTER TABLE humanGenes 
-                ADD done VARCHAR(5) DEFAULT(0)");
-    } catch {
-        warn "caught error: $_";
-    };
+    # Getting the GenomeDB adaptor
+    my $genome_db_adaptor = Bio::EnsEMBL::Registry->get_adaptor(
+        'Multi', 'compara', 'GenomeDB');
 
-    my $sth = $dbh->prepare("SELECT gene_stable_ID from humanGenes WHERE done='0'");
-    $sth->execute();
+    # Fetching GenomeDB objects for human and mouse
+    my $human_genome_db = $genome_db_adaptor->fetch_by_name_assembly('homo_sapiens');
+    my $mouse_genome_db = $genome_db_adaptor->fetch_by_name_assembly('mus_musculus');
 
-    my @genes = ();
+    # Getting the MethodLinkSpeciesSet adaptor
+    my $method_link_species_set_adaptor = Bio::EnsEMBL::Registry->get_adaptor(
+        'Multi', 'compara', 'MethodLinkSpeciesSet');
 
-    while(my @row = $sth->fetchrow_array()){
-        push @genes, $row[0];
-        
+    # Fetching the MethodLinkSpeciesSet object corresponding to orthologs between human and mouse genomic sequences:
+    my $human_mouse_orthologs =
+        $method_link_species_set_adaptor->fetch_by_method_link_type_genome_db_ids(
+            'ENSEMBL_ORTHOLOGUES',
+            [$human_genome_db, $mouse_genome_db]
+        );
+
+    # Getting the Homology adaptor
+    my $homology_adaptor = Bio::EnsEMBL::Registry->get_adaptor('Multi', 'compara', 'Homology');
+
+    # Fetch all the human-mouse one2one orthologs
+    my $homologies = $homology_adaptor->fetch_all_by_MethodLinkSpeciesSet($human_mouse_orthologs,  -ORTHOLOGY_TYPE => 'ortholog_one2one');
+
+    for(my $i = 0; $i < scalar @$homologies ; $i++){
+    
+        my $gene_members = $homologies->[$i]->gene_list();
+        my $goc_score = $homologies->[$i]->goc_score();
+        my $wga_coverage = $homologies->[$i]->wga_coverage();
+        my $is_high_confidence = $homologies->[$i]->is_high_confidence();
+        my $human_gene = $gene_members->[0]->stable_id();
+        my $mouse_gene = $gene_members->[1]->stable_id();
+
+        if(substr($mouse_gene, 3, 1) ne 'M')
+        {
+            $human_gene = $gene_members->[1]->stable_id();
+            $mouse_gene = $gene_members->[0]->stable_id();
+        }
+
+        try {
+                $dbh->do("INSERT INTO OrthologPairs  
+                (human_gene_id, mouse_gene_id, goc_score, wga_coverage, is_high_confidence) VALUES 
+                ('$human_gene', '$mouse_gene', '$goc_score', '$wga_coverage', '$is_high_confidence' )");
+            } catch {
+                warn "caught error: $_";
+            };
     }
-
-    $dbh->disconnect();
-
-    # Download all orthologes
-    batch_download(\@genes);
 
 }
 
+
 download_all_orthologs();
+
+
