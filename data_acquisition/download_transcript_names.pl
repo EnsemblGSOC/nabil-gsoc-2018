@@ -90,5 +90,57 @@ sub get_transcript_names {
 
 }
 
+sub save_species_name{
+
+    # This function adds a new column in the geneTranscripts table
+    # which stores the name of the species
+    # for better handling with the data
+
+
+    # connecting to the database
+    my $dbh = DBI->connect("dbi:SQLite:dbname=data/db.db","","");
+
+    # create column for storing mouse gene names
+    
+    try{
+        $dbh->do("ALTER TABLE geneTranscripts ADD species VARCHAR(100)");
+    } catch {
+        warn "caught error: $_";
+    };
+
+
+    my $sth = $dbh->prepare("SELECT transcript_id FROM geneTranscripts"); # load all the transcripts
+    $sth->execute();
+
+    my @transcript_ids = ();    # array to store transcript ids
+
+    while(my @row = $sth->fetchrow_array()){
+        push @transcript_ids, $row[0];
+    }
+
+    
+    for(my $i = 0; $i < scalar @transcript_ids; $i++ ){
+
+        my $species = 'human';   # default species name
+
+        if(substr($transcript_ids[$i], 3, 1) ne 'T'){        
+            $species = 'mouse';                 # test for the species name
+        }
+
+        try { # saving the transcript name in the local database
+                    $dbh->do("UPDATE geneTranscripts 
+                    SET species = '$species' 
+                    WHERE transcript_id='$transcript_ids[$i]'");
+        } catch {
+            warn "caught error: $_";
+        }
+    }
+
+   
+    # close the database connection
+    $dbh->disconnect();
+
+}
 
 get_transcript_names();
+save_species_name();
