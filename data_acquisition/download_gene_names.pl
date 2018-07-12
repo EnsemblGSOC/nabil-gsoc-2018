@@ -130,6 +130,74 @@ sub get_mouse_gene_names {
 
 }
 
+sub create_gene_table {
+
+    # This function creates a new table for genes where
+    # the gene_name, gene_id and species information are stored
+    # for better handling of the data
+
+
+    # connecting to the database
+    my $dbh = DBI->connect("dbi:SQLite:dbname=data/db.db","","");
+
+    # create table for storing gene information
+    try{
+        $dbh->do("CREATE TABLE Genes (Gene_ID VARCHAR(100), Gene_Name VARCHAR(100), Species VARCHAR(100), PRIMARY KEY (gene_id) )");
+    } catch {
+        warn "caught error: $_";
+    };
+
+
+    my $sth = $dbh->prepare("SELECT mouse_gene_id, mouse_gene_name FROM OrthologPairs"); # load all the mouse genes
+    $sth->execute();
+
+    my @gene_ids = ();    # array to store gene ids
+    my @gene_names = ();    # array to store gene names
+
+    while(my @row = $sth->fetchrow_array()){
+        push @gene_ids, $row[0];
+        push @gene_names, $row[1];
+    }
+
+    for(my $i = 0; $i < scalar @gene_ids; $i++ ){
+        
+        try { # save the gene information in the database
+                $dbh->do("INSERT INTO genes 
+                (gene_name,gene_id,species) 
+                 VALUES ('$gene_names[$i]', '$gene_ids[$i]', 'mouse')");
+        } catch {
+        warn "caught error: $_";
+        };
+    }
+
+    $sth = $dbh->prepare("SELECT human_gene_id, human_gene_name FROM OrthologPairs"); # load all the human genes
+    $sth->execute();
+
+    @gene_ids = ();    # array to store gene ids
+    @gene_names = ();    # array to store gene names
+
+    while(my @row = $sth->fetchrow_array()){
+        push @gene_ids, $row[0];
+        push @gene_names, $row[1];
+    }
+
+    for(my $i = 0; $i < scalar @gene_ids; $i++ ){
+        
+        try { # save the gene information in the database
+                $dbh->do("INSERT INTO genes 
+                 (gene_name,gene_id,species) 
+                 VALUES ('$gene_names[$i]', '$gene_ids[$i]', 'human')");
+        } catch {
+        warn "caught error: $_";
+        };
+    }
+   
+    # close the database connection
+    $dbh->disconnect();
+
+}
+
 
 get_human_gene_names();
 get_mouse_gene_names();
+create_gene_table();
