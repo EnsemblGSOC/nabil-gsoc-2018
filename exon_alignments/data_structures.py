@@ -9,6 +9,7 @@ from Bio import SeqIO
 
 
 
+
 class Transcript_From_Fasta(object):
 
     '''
@@ -87,19 +88,22 @@ class Transcript_From_DB(object):
         self.gene_name = gene_name
         self.transcript_id = transcript_id
 
-        self.exon_sequence = []
-        self.exon_id = []
+        
 
         conn = sqlite3.connect(path_to_db)  # connecting to the database
         c = conn.cursor()
 
         # Extract all the information related to the transcript from the database
-        c.execute('SELECT Exon_ID, seq, Exon_No FROM Transcripts'+transcript_id[-3:]+" WHERE transcript_id='"+ transcript_id +"' ORDER BY Exon_No")
+        c.execute('SELECT Exon_ID, seq, Exon_No FROM Transcripts'+transcript_id[-3:]+" WHERE transcript_id='"+ transcript_id +"'")
         all_rows = c.fetchall()
+
+        self.exon_sequence = [0] * len(all_rows)
+        self.exon_id = [0] * len(all_rows)
+
 
         for row in all_rows:
 
-            self.exon_id.append(row[0])
-            self.exon_sequence.append(row[1])
+            self.exon_id[int(row[2])-1] = row[0]
+            self.exon_sequence[int(row[2])-1] = row[1]
 
         conn.close()
