@@ -1,0 +1,149 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="{{ url_for('static', filename='css/icon.css') }}"  rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/materialize.min.css') }}"  rel="stylesheet">
+    
+    <style>
+        
+        tr{
+            border: 0px;
+        }
+
+        td{
+            border-radius: 0px;
+            text-align: center;
+        }
+    
+    </style>
+
+    <title>Exon Similarity</title>
+</head>
+<body>
+
+    <div class="navbar-fixed">
+        <nav>
+            <div class="nav-wrapper cyan lighten-1">
+                <a href="#" class="brand-logo center">Exon Similarity</a>
+                <ul id="nav-mobile" class="left hide-on-med-and-down">
+                <li><a href="/">  <i class="large material-icons">home</i></a></li>
+                </ul>
+            </div>
+        </nav>
+    </div>
+
+    <!--Make sure the form has the autocomplete function switched off:-->
+    <div class="container" style="width: 90%">
+        
+        <h3 style="text-align: center;">Transcript ID : <span id="transcript1_id">{{ transcript1 }}</span> <a class="btn-flat" id="link1" target="_blank"><i class="material-icons" style="font-size: 3rem">open_in_new</i></a> </h3>
+        
+        <svg width="100%" height="60%" id="draw"></svg>
+
+        <div class="row" style="margin-top:-20%;margin-bottom: 15%"  id="loading">
+        <div class="col s2 offset-s5">
+        <div class="preloader-wrapper big active" style="margin-left:35%">
+            <div class="spinner-layer spinner-blue">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                    </div><div class="gap-patch">
+                    <div class="circle"></div>
+                    </div><div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+    
+            <div class="spinner-layer spinner-red">
+                <div class="circle-clipper left">
+                <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                <div class="circle"></div>
+                </div>
+            </div>
+        
+            <div class="spinner-layer spinner-yellow">
+                <div class="circle-clipper left">
+                <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                <div class="circle"></div>
+                </div>
+            </div>
+        
+            <div class="spinner-layer spinner-green">
+                <div class="circle-clipper left">
+                <div class="circle"></div>
+                </div><div class="gap-patch">
+                <div class="circle"></div>
+                </div><div class="circle-clipper right">
+                <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+        </div>
+        </div>
+        
+        <h3 style="text-align: center;">Transcript ID : <span id="transcript2_id">{{ transcript2 }}</span> <a class="btn-flat" id="link2" target="_blank"><i class="material-icons" style="font-size: 3rem">open_in_new</i></a> </h3>
+        
+        
+
+    </div>
+
+    <div id="modal_line" class="modal" style="width: 75% ; height: 65%">
+        <div class="modal-content" style="width: 100% ;height: 83%">
+            <div class="row">
+                <div id="tabs" class="col s12">
+                  <ul class="tabs">
+                    <li class="tab col s4" onclick="get_splice_site_similarity()"><a id="tab1" href="#tab_splice_site">Splice Site Similarity</a></li>
+                    <li class="tab col s4" onclick="get_transcript_similarity()"><a  id="tab2" href="#tab_transcript">Transcript Similarity</a></li>
+                    <li class="tab col s4" onclick="get_protein_similarity()"><a  id="tab3" href="#tab_protein">Protein Similarity</a></li>                    
+                  </ul>
+                </div>
+                <div id="tab_splice_site" class="col s12">Test 1</div>
+                <div id="tab_transcript" class="col s12">Test 2</div>
+                <div id="tab_protein" class="col s12">Test 3</div>                
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-large btn-flat"><i class="large material-icons">done</i></a>
+        </div>
+    </div>
+
+    <div id="modal_block" class="modal">
+            <div class="modal-content">
+                <h4 id="modal_block_transcript_id" style="text-align: center"></h4>
+                <h4 id="modal_block_exon_id" style="text-align: center"></h4>
+                <hr>
+                <div class="container">
+                    <h5>Exon Sequence</h5>
+                    <p id="modal_block_exon_sequence" style="word-wrap: break-word;"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a href="#!" class="modal-close waves-effect waves-green btn-large btn-flat"><i class="large material-icons">done</i></a>
+            </div>
+    </div>
+
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/visualize.js') }}"></script>
+
+    
+   <script>       
+   
+        $(document).ready(function(){
+            $('.tooltipped').tooltip();
+            $('.modal').modal();
+            $('.tabs').tabs();
+        });
+
+       $(window).load(init('{{ match_score }}', '{{ mismatch_penalty }}', '{{ gap_open }}', '{{ gap_extend }}', '{{ skip_penalty }}' , '{{blosum}}' , '{{weight_mode}}' ));
+   </script>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="{{ url_for('static', filename='css/icon.css') }}"  rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/materialize.min.css') }}"  rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+    
+    <title>Transcript Comparisons</title>
+</head>
+<body>
+
+    <div class="navbar-fixed">
+            <nav>
+                <div class="nav-wrapper cyan lighten-1">
+                    <a href="#" class="brand-logo center">Transcript Comparisons</a>
+                    <ul id="nav-mobile" class="left hide-on-med-and-down">
+                    <li><a href="/">  <i class="large material-icons">home</i></a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+
+    <div class="container" style="margin-top: 5%">
+        
+    
+        <div class="row section">
+            <div class="input-field col s6 m3">
+                <input id="gene_name" list="gene_name_data" type="text" class="autocomplete">
+                <label for="gene_name">Gene Name</label>
+            </div>
+            <div class="input-field col s6 m3">
+                    <input id="gene_id" list="gene_id_data" type="text" class="autocomplete">
+                    <label for="gene_id">Gene ID</label>
+            </div>
+            <div class="input-field col s6 m3">
+                    <input id="transcript_name" list="transcript_name_data" type="text" class="autocomplete">
+                    <label for="transcript_name">Transcript Name</label>
+            </div>
+            <div class="input-field col s6 m3">
+                    <input id="transcript_id" list="transcript_id_data" type="text" class="autocomplete">
+                    <label for="transcript_id">Transcript ID</label>
+            </div>
+        </div>
+
+        <div class="row section">
+            
+                <div class="col s6 m2">
+                    <span style="font-size: 120%">Species</span>
+                </div>
+    
+                <div class="col s3 m2">
+                    <label>
+                        <input id="human" class="with-gap" name="group1" type="radio" checked onclick="init('human');" />
+                        <span>Human</span>
+                    </label>
+                </div>
+                <div class="col s3 m2">
+                    <label>
+                        <input id="mouse" class="with-gap" name="group1" type="radio" onclick="init('mouse');" />
+                        <span>Mouse</span>
+                    </label>
+                </div>
+    
+                <div class="col s6 m3">                                      
+                    <!-- Disabled Switch -->
+                    <div class="switch">
+                        <label>
+                            <span style="font-size: 120%; color: black; vertical-align:middle">Protein Coding</span>                        
+                            <input disabled checked type="checkbox" id="protein_coding">
+                            <span class="lever"></span>
+                            
+                        </label>
+                    </div>
+                </div>
+    
+                <div class="col s6 m3">                                      
+                        <!-- Disabled Switch -->
+                        <div class="switch">
+                            <label>
+                                <span style="font-size: 120%; color: black; vertical-align:middle">Gencode Basic</span>                        
+                                <input checked type="checkbox" id="gencode_basic" onclick="init('old')">
+                                <span class="lever"></span>
+                                
+                            </label>
+                        </div>
+                    </div>
+            </div>
+    
+    
+        <div class="row">
+            <div class="col s2 offset-s5">
+                <div class="preloader-wrapper big active" style="margin-left:35%" id="loading">
+                        <div class="spinner-layer spinner-blue">
+                            <div class="circle-clipper left">
+                            <div class="circle"></div>
+                            </div><div class="gap-patch">
+                            <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                            </div>
+                        </div>
+                    
+                        <div class="spinner-layer spinner-red">
+                            <div class="circle-clipper left">
+                            <div class="circle"></div>
+                            </div><div class="gap-patch">
+                            <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                            </div>
+                        </div>
+                    
+                        <div class="spinner-layer spinner-yellow">
+                            <div class="circle-clipper left">
+                            <div class="circle"></div>
+                            </div><div class="gap-patch">
+                            <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                            </div>
+                        </div>
+                    
+                        <div class="spinner-layer spinner-green">
+                            <div class="circle-clipper left">
+                            <div class="circle"></div>
+                            </div><div class="gap-patch">
+                            <div class="circle"></div>
+                            </div><div class="circle-clipper right">
+                            <div class="circle"></div>
+                            </div>
+                        </div>
+                        </div>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col s3 offset-s4">
+                <button class="btn waves-effect waves-light" type="submit" style="margin-left:30%;margin-top:50%;width:80%" id="submit_button" onclick="submit()">Submit
+                        <i class="material-icons right">send</i>
+                </button>
+            </div>
+        </div>
+    
+        <datalist id="gene_name_data">
+        </datalist>
+    
+        <datalist id="gene_id_data">
+        </datalist>
+    
+        <datalist id="transcript_name_data">
+            </datalist>
+        
+        <datalist id="transcript_id_data">
+        </datalist>
+        
+    </div>
+
+    <div id="modal_help" class="modal">
+        <div class="modal-content">
+            <h4>Help</h4>
+            <p>Help</p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Agree</a>
+        </div>
+    </div>    
+
+
+    <div class="fixed-action-btn">
+        <a class="btn-floating btn-large blue btn modal-trigger pulse" href="#modal_help">
+            <i class="fas fa-question"></i>
+        </a>
+    </div>
+    
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/materialize.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/index.js') }}"></script>
+    
+    
+   <script>       
+        $(document).ready(function(){
+            $('.modal').modal();
+        });
+            
+       $(window).load( init('human') );
+   </script>
+
+</body>
+</html>
