@@ -1,0 +1,271 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css">
+    
+    <style>
+      blockquote{
+        background-color: pink;
+        padding: 2px;
+      }
+    </style>
+
+    <title>Transcript Comparisons</title>
+</head>
+<body>
+
+    <nav>
+        <div class="nav-wrapper cyan lighten-1">
+            <a href="#" class="brand-logo center">Transcript Comparisons</a>            
+        </div>
+    </nav>
+    
+    <div class="row">
+        <div class="col offset-s1 s9" id="bodybox">          
+
+          <div id="gene_name" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Selecting the Gene Name</h4></blockquote>
+                <p>The user can select the name of the gene of interest.</p>
+                <img class="responsive-img" src="gifs/select_gene_name_index.gif">
+                <p>The page will be updated by showing the id of the selected gene, and the transcripts will be filtered according to the selected gene.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+          <div id="gene_id" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Selecting the Gene ID</h4></blockquote>
+                <p>The user can select the ID of the gene of interest.</p>
+                <img class="responsive-img" src="gifs/select_gene_id_index.gif">
+                <p>The page will be updated by showing the name of the selected gene, and the transcripts will be filtered according to the selected gene.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+          <div id="transcript_name" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Selecting the Transcript Name</h4></blockquote>
+                <p>The user can select the name of the transcript of interest.</p>
+                <img class="responsive-img" src="gifs/select_transcript_name_index.gif">
+                <p>The page will be updated by showing the information of the selected transcript.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+          <div id="transcript_id" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Selecting the Transcript ID</h4></blockquote>
+                <p>The user can select the ID of the transcript of interest.</p>
+                <img class="responsive-img" src="gifs/select_transcript_id_index.gif">
+                <p>The page will be updated by showing the information of the selected transcript.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+          <div id="fill_text" class="section scrollspy">
+            <div class="section">
+              <blockquote><h4>Filling the Text Boxes</h4></blockquote>
+              <p>The user can also write in the textbox, instead of only selecting from the options.</p>
+              <img class="responsive-img" src="gifs/fill_text_index.gif">
+              <p>As the user enter characters, suggestions will appear to ease the task.</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+
+          <div id="change_species" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Changing Species</h4></blockquote>
+                <p>By default we are considering the human genes and transcripts as input. However it can be changed by selecting the 'mouse' option or vice-versa</p>
+                <img class="responsive-img" src="gifs/change_species_index.gif">
+                <p>After changing the species the page will be updated and the appropriate genes and transcripts will be loaded.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+          <div id="gencode_basic" class="section scrollspy">
+            <div class="section">
+              <blockquote><h4>Toggling Gencode Basic</h4></blockquote>
+              <p>By default we are analyzing only the stable and complete 'Gencode Basic' set of transripts. However by toggling the gencode_basic switch, other ordinary transcripts can be included to the analysis.</p>
+              <img class="responsive-img" src="gifs/change_gencode_basic.gif">
+              <p>Although the rankings can be computed, the protein similarity or the UTR regions may not be identified. Since we only collected phase information for gencode_basic transcripts.</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+
+          <div id="rank_orthologs" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Ranking the Orthologous Transcripts</h4></blockquote>
+                <p>After selecting a transcript and clicking on the 'submit' button the orthologous transcripts to the selected transcript will be listed.</p>
+                <img class="responsive-img" src="gifs/list_orthologs_ortholog.gif">
+                <p>It takes a while to compute the ranking, and after that is completed the orthologous transcripts are listed based on their similarity score.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+          <div id="change_mode" class="section scrollspy">
+            <div class="section">
+              <blockquote><h4>Changing Alignment Mode</h4></blockquote>
+              <p>By default we use the splice site weighted global alignment algorithm. However it's also possible to use the usual global alignment algorithm.</p>
+              <img class="responsive-img" src="gifs/change_mode_ortholog.gif">
+              <p>The effect of the change can be directly observed from the scores.</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+
+          <div id="change_params" class="section scrollspy">
+            <div class="section">
+              <blockquote><h4>Changing Algorithm Parameters</h4></blockquote>
+              <p>It is possible for the users to change the parameters used by the ranking algorithm, namely:</p>
+              <ol>
+                <li>Match score</li>
+                <li>Mismatch penalty</li>
+                <li>Gap open penalty</li>
+                <li>Gap extend penalty</li>
+                <li>Exon skip penalty</li>
+              </ol>
+              <img class="responsive-img" src="gifs/change_params_ortholog.gif">
+              <p>After changing the parameters the new scores will be computed and the ranking will be updated accordingly</p>
+            </div>
+          </div>
+          <div class="divider"></div>
+
+          <div id="go_to_visualization" class="section scrollspy">
+              <div class="section">
+                <blockquote><h4>Visualizing Exon Similarity</h4></blockquote>
+                <p>By clicking on the 'Similarity' button the user will be taken to the Transcript Visualization page.</p>
+                <img class="responsive-img" src="gifs/goto_visualization.gif">
+                <p>In this page, the exons will be paired against the most similar ones according to our algorithm. Along with the visualization the exon sequences and exon level similarity can also be observed.</p>
+              </div>
+            </div>
+            <div class="divider"></div>
+
+            <div id="view_seqence" class="section scrollspy">
+                <div class="section">
+                  <blockquote><h4>Viewing Exon Sequences</h4></blockquote>
+                  <p>By selecting a exon the user can view the exon sequence.</p>
+                  <img class="responsive-img" src="gifs/view_exon_sequence_visualization.gif">
+                  <p>The UTR are marked in <span style="color: orange">orange</span> for better understanding.</p>
+                </div>
+              </div>
+              <div class="divider"></div>
+
+            <div id="goto_ensembl" class="section scrollspy">
+                <div class="section">
+                  <blockquote><h4>Viewing on Ensembl</h4></blockquote>
+                  <p>By clicking on the link next to transcript id, the user will be able to view that transcript on Ensembl.</p>
+                  <img class="responsive-img" src="gifs/goto_ensembl.gif">                  
+                </div>
+              </div>
+              <div class="divider"></div>
+               
+            <div id="transcript_similarity" class="section scrollspy">
+                <div class="section">
+                  <blockquote><h4>Observing Exon Sequence Similarity</h4></blockquote>
+                  <p>By selecting a exon pair and and then going to the 'Transcript Similarity' tab, the user can observe the similarity of the sequences of the paired exons</p>
+                  <img class="responsive-img" src="gifs/transcript_sim_visualization.gif">
+                  <p>The sequence similarity is computed using MUSCLE, scored with the parameters selected by the user. The aligned positions are colored according to the score at that position.</p>
+                </div>
+              </div>
+              <div class="divider"></div>
+
+            <div id="protein_similarity" class="section scrollspy">
+                <div class="section">
+                  <blockquote><h4>Observing Protein Similarity</h4></blockquote>
+                  <p>By selecting a exon pair and and then going to the 'Protein Similarity' tab, the user will be able to observe the similarity of the proteins translated from the paired exons</p>
+                  <img class="responsive-img" src="gifs/protein_sim.gif">
+                  <p>The protein similarity is computed using MUSCLE, scored with the default Blosum62 matrix. The aligned positions are colored according to the score at that position.</p>
+                </div>
+              </div>
+              <div class="divider"></div>
+
+              <div id="splice_site_similarity" class="section scrollspy">
+                  <div class="section">
+                    <blockquote><h4>Observing Splice Site Similarity</h4></blockquote>
+                    <p>By selecting a exon pair and and then going to the 'Splice Site Similarity' tab, the user can observe the similarity of the splice sites of the paired exons</p>
+                    <img class="responsive-img" src="gifs/splice_site_similarity.gif">
+                    <p>The splice site similarity is computed using our weighted global alignment algorithm, scored with the parameters selected by the user. The aligned positions are colored according to the score at that position.</p>
+                  </div>
+                </div>
+
+        </div>
+
+
+        <div class="col hide-on-small-only m3 l2">
+          <ul class="section table-of-contents">
+            <li><a href="#gene_name">Selecting the Gene Name</a></li>
+            <li><a href="#gene_id">Selecting the Gene ID</a></li>
+            <li><a href="#transcript_name">Selecting the Transcript Name</a></li>
+            <li><a href="#transcript_id">Selecting the Transcript ID</a></li>
+            <li><a href="#fill_text">Filling the Text Boxes</a></li>
+            <li><a href="#change_species">Changing Species</a></li>
+            <li><a href="#gencode_basic">Toggling Gencode Basic</a></li>
+            <li><a href="#rank_orthologs">Ranking the Orthologous Transcripts</a></li>
+            <li><a href="#change_mode">Changing Alignment Mode</a></li>
+            <li><a href="#change_params">Changing Algorithm Parameters</a></li>
+            <li><a href="#go_to_visualization">Visualizing Exon Similarity</a></li>
+            <li><a href="#view_seqence">Viewing Exon Sequences</a></li>
+            <li><a href="#goto_ensembl">Viewing on Ensembl</a></li>
+            <li><a href="#transcript_similarity">Observing Exon Sequence Similarity</a></li>
+            <li><a href="#protein_similarity">Observing Protein Similarity</a></li>
+            <li><a href="#splice_site_similarity">Observing Splice Site Similarity</a></li>
+          </ul>
+        </div>
+      </div>
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>    
+    
+   <script>       
+        function fixmetotop() {
+          var fixmeTop = $('.table-of-contents').offset().top;
+          $(window).scroll(function() {
+            //aktuelle Scrollposition auslesen
+            var currentScroll = $(window).scrollTop(),
+            //+1em rechnen
+            currentScroll = currentScroll + 15,
+            actualBottom = $('#bodybox').offset().top + $('#bodybox').outerHeight(true),
+            heightSideNav = $('.table-of-contents').outerHeight(true);
+            if (currentScroll >= fixmeTop && currentScroll <= actualBottom - heightSideNav) {
+              //CSS für fixed setzen
+              $('.table-of-contents').css({
+                position: 'fixed',
+                top: '0',
+                bottom: ''
+              });
+            } else {
+              if(currentScroll >= actualBottom - heightSideNav) {
+                $('.table-of-contents').css({
+                  position: 'fixed',
+                  bottom: '0',
+                  top: ''
+                });
+              } else {
+                //CSS für nicht fixed setzen
+                $('.table-of-contents').css({
+                  position: 'static',
+                  bottom: '',
+                  top: ''
+                });
+              }
+            }
+          });
+        }
+        $(document).ready(function () {
+          var fillLorepIpsum = function () {
+            for (var i = 0; i < 1000; i++) {
+              $("#loremIpsum1").append("content1 ");
+              $("#loremIpsum2").append("content2 ");
+              $("#loremIpsum3").append("content3 ");
+            }
+          }
+          fillLorepIpsum();
+          fixmetotop();
+          $('.scrollspy').scrollSpy();
+        });
+   </script>
+
+</body>
+</html>
