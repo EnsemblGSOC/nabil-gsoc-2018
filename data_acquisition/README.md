@@ -31,6 +31,11 @@ Next, we can download the name of the transcripts, for better readability and re
 $ perl download_transcript_names.pl
 ```
 
+Next, filter the GENCODE-BASIC transcripts, as we'll be mostly dealing with them
+```
+$ perl filter_gencode_basic.pl
+```
+
 Next, we need to download the phase information of the exons for translating them to protein correctly
 ```
 $ perl download_phase_information.pl
