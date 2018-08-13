@@ -8,6 +8,7 @@
 import sqlite3
 from Bio import SeqIO
 from tqdm import tqdm
+import os
 
 
 class Transcript_From_Fasta(object):
