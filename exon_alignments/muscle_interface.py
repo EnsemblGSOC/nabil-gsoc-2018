@@ -15,7 +15,7 @@ from Bio.SubsMat.MatrixInfo import *
 import sys
 import os
 
-fp = open('muscle_path.txt','r')
+fp = open(os.path.join('..','exon_alignments','muscle_path.txt'),'r')
 muscle_exe_path = fp.read()
 fp.close()
 
