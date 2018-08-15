@@ -32,7 +32,7 @@ sub filter_gencode_basic {
     };
 
     # since we're only working with the protein coding transcripts, we're only checking for those
-    my $sth = $dbh->prepare("SELECT transcript_id, gene_id FROM GeneTranscripts WHERE Biotype='protein_coding' AND gencode_basic IS NULL");
+    my $sth = $dbh->prepare("SELECT transcript_id, gene_id FROM GeneTranscripts WHERE Biotype='protein_coding'");
     $sth->execute();
 
     my @transcripts = (); # array to store transcript ids
