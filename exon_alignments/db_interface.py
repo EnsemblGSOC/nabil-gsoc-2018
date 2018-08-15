@@ -9,7 +9,6 @@ import sqlite3
 from tqdm import tqdm
 from exon_similarity import process_transcript
 import os
-from recursive_backtracking import process_transcript_recursive
 from exon_alignment_dp import dp_wrapper
 
 
