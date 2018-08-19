@@ -9,6 +9,8 @@ import os
 from flask import Flask, render_template, send_from_directory, request, jsonify
 from backend import *
 import importlib.util
+import webbrowser
+import threading
 
 
 app = Flask(__name__)
@@ -97,5 +99,9 @@ if __name__ == '__main__':
     # running the app
 
     app.debug = False
+
+    threading.Timer(1.25, lambda: webbrowser.open('http://127.0.0.1:5000/' , new=2) ).start()
+
     app.run(host="127.0.0.1",port="5000")
+    
     
