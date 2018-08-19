@@ -12,7 +12,7 @@ import os
 from exon_alignment_dp import dp_wrapper
 
 
-db_path = os.path.join("..","data_acquistion","data","db.db")       # path to the local database
+db_path = os.path.join("..","data_acquisition","data","db.db")       # path to the local database
 gene_list_path = "gene_ids_from_publication.txt"  # path to the txt file containing the gene ids of the publication
                                                   # Mudge, Jonathan M., et al. "The origins, evolution, and functional potential 
                                                   # of alternative splicing in vertebrates." Molecular biology and evolution 28.10 (2011): 2949-2959.
