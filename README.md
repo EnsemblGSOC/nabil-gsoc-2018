@@ -53,6 +53,13 @@ Javascript controls the dynamicity of the application. [MaterializeCSS](https://
 
 ## Installation
 
+First of all make the shell files executable
+
+```
+$ chmod +x ./setup.sh
+$ chmod +x ./run.sh
+```
+
 Almost all the requirements are dealt with when the **setup.sh** is run, which needs sudo privilege.
 
 ```
