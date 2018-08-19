@@ -17,7 +17,11 @@ from muscle_interface import protein_similarity_wrapper, transcript_similarity_w
 from blosum_matrices import get_blosum_scores
 from weighted_alignment import weighted_alignment_wrapper
 
-db_path = os.path.join("..","data_acquistion","data","db.db")
+global db_path
+db_path = os.path.join("..","data_acquisition","data","db.db")
+print('***************************')
+print(db_path)
+print('***************************')
 
 
 def load_from_db(data_type, species, gene_id, protein_coding, gencode_basic):
@@ -34,7 +38,7 @@ def load_from_db(data_type, species, gene_id, protein_coding, gencode_basic):
     Returns:
         dict -- {"data" : list of extracted data}
     """
-
+    global db_path
     conn = sqlite3.connect(db_path)         # connecting to the database
     c = conn.cursor()
 
@@ -103,7 +107,7 @@ def extract_from_gene(gene_name,gene_id,species, protein_coding, gencode_basic):
     """
 
     
-    
+    global db_path
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
@@ -149,6 +153,7 @@ def extract_from_gene(gene_name,gene_id,species, protein_coding, gencode_basic):
             transcript_ids.append(all_data[i][0])
             transcript_names.append(all_data[i][1])
 
+    conn.close()
 
     return {
             "valid" : True,
@@ -175,7 +180,7 @@ def extract_from_transcript(transcript_name, transcript_id):
                  "transcript_name"}
     """
         
-
+    global db_path
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
@@ -210,6 +215,8 @@ def extract_from_transcript(transcript_name, transcript_id):
     c.execute("SELECT Gene_Name FROM Genes WHERE Gene_ID='"+gene_id+"'")
     all_data = c.fetchall()
     gene_name = all_data[0][0]
+
+    conn.close()
 
     return {
             "valid" : True,
@@ -296,6 +303,7 @@ def load_orthologs(transcript_id, protein_coding, gencode_basic):
 
     """
                                             # connecting to the database
+    global db_path
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
@@ -410,7 +418,7 @@ def get_splice_site_info(transcript_id, exon_id):
                  "strand"}
     """
 
-
+    global db_path
     conn = sqlite3.connect(db_path)         # connecting to database
     c = conn.cursor()
 
@@ -434,6 +442,8 @@ def get_splice_site_info(transcript_id, exon_id):
     absolute_end = end
     relative_start = int(start) - int(exon1_start)
     relative_end = int(end) - int(exon1_start)
+
+    conn.close()
 
     return { "absolute_start" : absolute_start,
              "absolute_end" : absolute_end,
@@ -475,7 +485,7 @@ def get_protein_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id):
 
             exon2_seq = transcript_2.exon_sequence[i]
 
-
+    global db_path
     conn = sqlite3.connect(db_path)     # connecting to the database
     c = conn.cursor()
 
@@ -529,6 +539,8 @@ def get_protein_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id):
         exon2_end_phase = (3-exon2_end_phase) % 3
 
     exon2_seq = exon2_seq[exon2_start_phase:len(exon2_seq)-exon2_end_phase] 
+
+    conn.close()
 
     return protein_similarity_wrapper(exon1_seq, exon1_id, exon2_seq, exon2_id)
 
@@ -634,8 +646,8 @@ def extract_species(transcript_id):
     
     Returns:
         dict -- {"species"}
-    """
-
+    """ 
+    global db_path
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
 
@@ -651,6 +663,7 @@ def extract_species(transcript_id):
     elif(species=='mouse'):
 
         species = 'Mus_musculus'
- 
+    
+    conn.close()
 
     return {"species" : species}
