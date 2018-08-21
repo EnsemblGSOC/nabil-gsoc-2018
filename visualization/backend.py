@@ -14,14 +14,12 @@ sys.path.append(os.path.join('..','exon_alignments'))          # adding the exon
 
 from db_interface import get_transcript, process_ortholog_pairs
 from muscle_interface import protein_similarity_wrapper, transcript_similarity_wrapper
+from biopython_alignment_interface import protein_similarity_wrapper_biopython, transcript_similarity_wrapper_biopython
 from blosum_matrices import get_blosum_scores
 from weighted_alignment import weighted_alignment_wrapper
 
 global db_path
 db_path = os.path.join("..","data_acquisition","data","db.db")
-print('***************************')
-print(db_path)
-print('***************************')
 
 
 def load_from_db(data_type, species, gene_id, protein_coding, gencode_basic):
@@ -542,7 +540,18 @@ def get_protein_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id):
 
     conn.close()
 
-    return protein_similarity_wrapper(exon1_seq, exon1_id, exon2_seq, exon2_id)
+    muscle_err = 'None'
+
+    try:
+        alignment = protein_similarity_wrapper(exon1_seq, exon1_id, exon2_seq, exon2_id)
+    
+    except:
+
+        alignment = protein_similarity_wrapper_biopython(exon1_seq, exon1_id, exon2_seq, exon2_id)
+        muscle_err = 'error'
+
+    return {'alignment' : alignment,
+            'muscle_error' : muscle_err }
 
 
 def get_transcript_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id, match_score, mismatch_penalty, gap_start, gap_extend, weight_mode):
@@ -587,6 +596,8 @@ def get_transcript_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id
 
     if(weight_mode=='uniform'):         # using MUSCLE
 
+        muscle_err = 'None'
+
         alignment = ''
         score = 0
         gap_continue = 0
@@ -606,7 +617,12 @@ def get_transcript_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id
 
         else:                           # MUSCLE interface
             
-            alignment = transcript_similarity_wrapper(exon1_seq, exon1_id, exon2_seq, exon2_id)
+            try:
+                alignment = transcript_similarity_wrapper(exon1_seq, exon1_id, exon2_seq, exon2_id)
+
+            except:
+                alignment = transcript_similarity_wrapper_biopython(exon1_seq, exon1_id, exon2_seq, exon2_id, match_score, mismatch_penalty, gap_start, gap_extend)
+                muscle_err = 'error'
 
         # calculating the score
         for i in range(len(alignment[0])):
@@ -626,15 +642,16 @@ def get_transcript_similarity(transcript1_id, transcript2_id, exon1_id, exon2_id
                 score += mismatch_penalty
                 gap_continue = 0
         
-        return {'score':score/(len(alignment[0])*max(match_score, mismatch_penalty, gap_extend, gap_start)),
-                'alignment':alignment}
+        return {'score' : score/(len(alignment[0])*max(match_score, mismatch_penalty, gap_extend, gap_start)),
+                'alignment' : alignment,
+                'muscle_error' : muscle_err }
     
     else:               # use Weight Alignment Algorithm
         
         (score,alignment) = weighted_alignment_wrapper(exon1_seq, exon2_seq, match_score, mismatch_penalty, gap_start, gap_extend, score_only=False, backend='C++')
 
-        return {'score':score,
-                'alignment':alignment}
+        return {'score' : score,
+                'alignment' : alignment}
                 
 
 def extract_species(transcript_id):
