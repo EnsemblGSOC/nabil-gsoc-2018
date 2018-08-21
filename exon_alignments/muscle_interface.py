@@ -18,8 +18,15 @@ import os
 muscle_exe_path = 'no muscle found'
 
 try:
-    
-    muscle_exe_path = os.path.join('..','muscle',next(os.walk(os.path.join('..','muscle')))[2][0])
+    files = next(os.walk(os.path.join('..','muscle')))[2]
+
+    if(files[0]=='README.md'):
+
+        muscle_exe_path = os.path.join('..','muscle', files[1])
+
+    elif(files[1]=='README.md'):
+
+        muscle_exe_path = os.path.join('..','muscle', files[0])
 
 except:
 
