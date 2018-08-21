@@ -25,6 +25,21 @@ blosums = { "blosum30" : blosum30,
             "blosum100" : blosum100 }
 
 
+def get_raw_blosum_matrix(blosum_mat):
+    """
+    Returns the BioPython Blosum Matrix for alignment purposes
+    
+    Arguments:
+        blosum_mat {str} -- which blosum matrix to use
+    
+    Returns:
+        dict -- The blosum matrix
+    """
+
+
+    return blosums[blosum_mat]
+
+
 def get_blosum_scores(blosum_mat, gap_penalty=0.0):
     """
     Obtain the requested Blosum scoring with gap penalties

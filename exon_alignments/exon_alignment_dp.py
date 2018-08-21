@@ -153,7 +153,6 @@ def dp_wrapper(query_transcript, ortholog_transcript, params, weight_mode):
     backtrack_memo = []
     similarity_memo = []
 
-    #print(params)
 
 
 
@@ -175,13 +174,17 @@ def dp_wrapper(query_transcript, ortholog_transcript, params, weight_mode):
     
     normalization = len(query_transcript.exon_sequence)
 
+
     for seq in query_transcript.exon_sequence:
 
         if(len(seq)==0):
 
             normalization -= 1
 
-    score /= normalization
+    if(normalization!=0):
+        score /= normalization
+    else:
+        score = 0
 
     pairing = backtrack(backtrack_memo)
 

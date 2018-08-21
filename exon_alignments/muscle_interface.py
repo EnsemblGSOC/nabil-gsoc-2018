@@ -15,9 +15,15 @@ from Bio.SubsMat.MatrixInfo import *
 import sys
 import os
 
-fp = open(os.path.join('..','exon_alignments','muscle_path.txt'),'r')
-muscle_exe_path = fp.read()
-fp.close()
+muscle_exe_path = 'no muscle found'
+
+try:
+    
+    muscle_exe_path = os.path.join('..','muscle',next(os.walk(os.path.join('..','muscle')))[2][0])
+
+except:
+
+    pass 
 
 
 def muscle():
