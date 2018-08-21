@@ -30,12 +30,9 @@ function init(inp_transcript_id, inp_protein_coding, inp_gencode_basic, inp_matc
     document.getElementById('in_gap_extend').value = gap_extend;
     document.getElementById('in_skip_penalty').value = skip_penalty;
 
-
-
     $(document).ready(function() {
         M.updateTextFields();
     });
-
             
     refresh();
 }
@@ -44,10 +41,8 @@ function init(inp_transcript_id, inp_protein_coding, inp_gencode_basic, inp_matc
 function refresh(){
 
 	$.get(`http://127.0.0.1:5000/get_orthologs?transcript_id=${transcript_id}&protein_coding=${protein_coding}&gencode_basic=${gencode_basic}`, function(data, status){
-        
-    
+            
         document.getElementById(mode).checked = true;
-
 
         var ele = document.getElementById("table_body");
         ele.innerHTML= '';
@@ -61,17 +56,14 @@ function refresh(){
             extractScore(transcript_id ,data["data"][i]["transcript_id"])
         }
 
-        var pooling = setInterval( ()=>{
-            
+        var pooling = setInterval( ()=>{            
 
             var progress = document.getElementById("progress");
             progress.style["width"] = (Math.round((Object.keys(scores).length/data["data"].length)*100)).toString()+'%';
             
             if(Object.keys(scores).length==data["data"].length){
                 
-                clearInterval(pooling);
-
-                console.log(scores);
+                clearInterval(pooling);                
 
                 var scoreSet = new Set();
 
@@ -82,9 +74,7 @@ function refresh(){
                 sortedScores = Array.from(scoreSet);
                 
                 sortedScores.sort();
-                sortedScores.reverse();
-
-                console.log(sortedScores);
+                sortedScores.reverse();                
                 
                 for(var j=0;j<sortedScores.length;j++){
                     
@@ -124,38 +114,35 @@ function refresh(){
                             table_data +=`<td>${scores[data["data"][i]["transcript_id"]]}</td></tr>`;
                         }
                     }
-                }
-
-                        
+                }                        
 
                 ele.innerHTML = table_data;
             }
 
         }, 500);
                 
-
     });
 
 }
 
+
 function extractScore(transcript1, transcript2){
         
     $.get(`http://127.0.0.1:5000/pair_exons?transcript1_id=${transcript1}&transcript2_id=${transcript2}&match_score=${match_score}&mismatch_penalty=${mismatch_penalty}&gap_open=${gap_open}&gap_extend=${gap_extend}&skip_penalty=${skip_penalty}&weight_mode=${mode}`, function(data, status){
-        console.log(data);
-               
+                       
         scores[transcript2] = data["best_score"];
         
     });
 
 }
 
+
 function change_mode(new_mode){
 
     mode = new_mode;
-    console.log(mode);
-    
-    //window.location.href = `/orthologs?transcript=${transcript_id}&protein_coding=${protein_coding}&gencode_basic=${gencode_basic}&weight_mode=${mode}`;
+            
 }
+
 
 function update(){
 

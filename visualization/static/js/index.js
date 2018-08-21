@@ -1,6 +1,7 @@
 var _species ;
 var gene_modified = 0;
 
+
 /**
  * Initialize the page
  * @param {str} species : name of the species ('human' or 'mouse' or 'old' which refers to unchanged)
@@ -107,11 +108,10 @@ function init(species){
 
 		done++;
 		
-    });
-
-	
-		
+	});
+			
 }
+
 
 /**
  * Action of the submit button
@@ -127,13 +127,12 @@ function submit(){
 
 }
 
+
 /***
  * Action of changing gene name
  */
-
 $('#gene_name').on('input', function() { 
 	var val =$(this).val(); // get the current value of the input field.
-
 
 	if((val==='') && (gene_modified == 1)){
 		init('old');
@@ -185,11 +184,9 @@ $('#gene_name').on('input', function() {
 				  });
 			}									
 		});
-	}
-	
-	
-		  
+	}	  
 });
+
 
 /***
  * Action of changing gene id
@@ -197,7 +194,6 @@ $('#gene_name').on('input', function() {
 
 $('#gene_id').on('input', function() { 
 	var val =$(this).val(); // get the current value of the input field.
-
 
 	if((val==='') && (gene_modified == 1)){
 		init('old');
@@ -250,10 +246,8 @@ $('#gene_id').on('input', function() {
 			}									
 		});
 	}
-
-
-		  
 });
+
 
 /***
  * Action of changing transcript name
@@ -287,19 +281,15 @@ $('#transcript_name').on('input', function() {
 				$(document).ready(function() {
 					M.updateTextFields();
 				  });
-					  
-
 			}									
 		});
 	}
-
-
 });
+
 
 /***
  * Action of changing transcript id
  */
-
 $('#transcript_id').on('input', function() { 
 	var val =$(this).val(); // get the current value of the input field.
 	
@@ -325,15 +315,10 @@ $('#transcript_id').on('input', function() {
 
 				loading.style.visibility = "hidden";
 
-
 				$(document).ready(function() {
 					M.updateTextFields();
 				});
-
 			}									
 		});
-	}
-
-
-		 
+	}	 
 });

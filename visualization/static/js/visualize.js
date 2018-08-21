@@ -19,6 +19,7 @@ var gap_extend;
 var skip_penalty;
 var blosum_name;
 
+
 function init(inp_match_score, inp_mismatch_penalty, inp_gap_open, inp_gap_extend, inp_skip_penalty, blosum, weight_mode){
 
     match_score = inp_match_score;
@@ -27,11 +28,7 @@ function init(inp_match_score, inp_mismatch_penalty, inp_gap_open, inp_gap_exten
     gap_extend = inp_gap_extend;
     skip_penalty = inp_skip_penalty;
     mode = weight_mode;
-    blosum_name = blosum;
-
-
-    console.log(mode);
-    
+    blosum_name = blosum;    
 
     $.get(`http://127.0.0.1:5000/scoring?match_score=${match_score}&mismatch_penalty=${mismatch_penalty}&gap_open=${gap_open}&blosum=${blosum_name}`, function(matrices, status){
 
@@ -43,8 +40,6 @@ function init(inp_match_score, inp_mismatch_penalty, inp_gap_open, inp_gap_exten
 
         protein_scoring["maxx"] = matrices["protein_scores_max"];
         protein_scoring["minn"] = matrices["protein_scores_min"];
-
-        
     })
 
     transcript1_id = document.getElementById("transcript1_id").innerHTML;
@@ -63,26 +58,19 @@ function init(inp_match_score, inp_mismatch_penalty, inp_gap_open, inp_gap_exten
     })
 
     $.get(`http://127.0.0.1:5000/pair_exons?transcript1_id=${transcript1_id}&transcript2_id=${transcript2_id}&match_score=${match_score}&mismatch_penalty=${mismatch_penalty}&gap_open=${gap_open}&gap_extend=${gap_extend}&skip_penalty=${skip_penalty}&weight_mode=${mode}`, function(data, status){
-        
-        console.log(data);
-        
 
         var draw = document.getElementById('draw');
         draw.innerHTML = '';
         var height = draw.clientHeight;
         var width = draw.clientWidth;
 
-
         var max_len = Math.max(data["transcript1_total_exons"],data["transcript2_total_exons"]);
-       
-        
+               
         var unit_height = Math.floor(height*0.1);
         var unit_width = Math.floor((width/max_len)*0.1);
         var exon_width = Math.floor((width - unit_width * (max_len+1)) / max_len);     
         
-
         var svg_elements =  "";
-
 
         for(var i=0; i<data["transcript1_total_exons"]; i++){
             var j = i.toString();
@@ -141,7 +129,6 @@ function init(inp_match_score, inp_mismatch_penalty, inp_gap_open, inp_gap_exten
         draw.innerHTML = svg_elements;
         
     })
-    
 
 }
 
@@ -152,14 +139,15 @@ function on_focus(id){
     ele.style["stroke-width"] = "10px";
 }
 
+
 function out_focus(id){
 
     var ele = document.getElementById(id);
     ele.style["stroke-width"] = "3px";
 }
 
-function pop_up_similarity(transcript1, transcript2, exon1, exon2){
 
+function pop_up_similarity(transcript1, transcript2, exon1, exon2){
 
     var ele;
     var tab = document.getElementById("tab3");
@@ -179,9 +167,7 @@ function pop_up_similarity(transcript1, transcript2, exon1, exon2){
         ele = document.getElementById("tab_splice_site");
         tab.classList.remove("active");
     }
-    
-
-    
+        
     $('.tabs').tabs();
 
     $.get(`http://127.0.0.1:5000/get_exons?transcript_id=${transcript1}&exon_number=${exon1}`, function(data, status){
@@ -190,7 +176,6 @@ function pop_up_similarity(transcript1, transcript2, exon1, exon2){
 
 
         $.get(`http://127.0.0.1:5000/get_exons?transcript_id=${transcript2}&exon_number=${exon2}`, function(data, status){
-
 
             exon2_id = data["exon_id"];
 
@@ -231,8 +216,7 @@ function pop_up_similarity(transcript1, transcript2, exon1, exon2){
 function get_exon_sequence(transcript_id,exon_number){
         
     $.get(`http://127.0.0.1:5000/get_exons?transcript_id=${transcript_id}&exon_number=${exon_number}`, function(data, status){
-        console.log(data);
-            
+                    
         document.getElementById("modal_block_transcript_id").innerHTML = "Transcript ID : " + data["transcript_id"];
         document.getElementById("modal_block_exon_id").innerHTML = "Exon ID : " + data["exon_id"];
         if(data["utr_pos"]==-1){
@@ -245,13 +229,13 @@ function get_exon_sequence(transcript_id,exon_number){
         else{
             document.getElementById("modal_block_exon_sequence").innerHTML = data["exon_sequence"] + `<span class="orange-text">${data["utr_sequence"]}</span>`;
         }
-        
 
         $('#modal_block').modal('open');
         
     })
 
 }
+
 
 function get_splice_coordinates(){
 
@@ -305,8 +289,11 @@ function get_splice_coordinates(){
                             </div>`;
                             
         });
+
     });
+
 }
+
 
 function get_protein_similarity(){
 
@@ -314,18 +301,17 @@ function get_protein_similarity(){
     
     ele.innerHTML = '';
 
-    $.get(`http://127.0.0.1:5000/get_protein_similarity?transcript1_id=${transcript1_id}&transcript2_id=${transcript2_id}&exon1_id=${exon1_id}&exon2_id=${exon2_id}`, function(data, status){
-
-        
+    $.get(`http://127.0.0.1:5000/get_protein_similarity?transcript1_id=${transcript1_id}&transcript2_id=${transcript2_id}&exon1_id=${exon1_id}&exon2_id=${exon2_id}`, function(data, status){    
                 
         if(typeof(data.error)==="undefined"){        
-            alignment_1 = data[0];
-            alignment_2 = data[1];
+            alignment_1 = data.alignment[0];
+            alignment_2 = data.alignment[1];
+
+            if(data.muscle_error==='error'){
             
-            
-    
-            //ele.innerHTML = `<p>${alignment_1}</p><p>${alignment_2}</p>`;
-    
+                M.toast({html: `Error with MUSCLE exe</br> Please make sure you only have</br> the 'muscle_exe_file' in the 'muscle directory'`})
+            }
+                                        
             ele.innerHTML =  pretty_format(alignment_1, alignment_2, protein_scoring);
     
             $('.tooltipped').tooltip();
@@ -335,8 +321,6 @@ function get_protein_similarity(){
 
             alert(data.error);
         }
-
-
         
     }); 
 
@@ -348,17 +332,17 @@ function get_transcript_similarity(){
     var ele = document.getElementById("tab_transcript");
 
     ele.innerHTML = '';
-    console.log(`http://127.0.0.1:5000/get_transcript_similarity?transcript1_id=${transcript1_id}&transcript2_id=${transcript2_id}&exon1_id=${exon1_id}&exon2_id=${exon2_id}&match_score=${match_score}&mismatch_penalty=${mismatch_penalty}&gap_open=${gap_open}&gap_extend=${gap_extend}&weight_mode=${mode}`);
     
     $.get(`http://127.0.0.1:5000/get_transcript_similarity?transcript1_id=${transcript1_id}&transcript2_id=${transcript2_id}&exon1_id=${exon1_id}&exon2_id=${exon2_id}&match_score=${match_score}&mismatch_penalty=${mismatch_penalty}&gap_open=${gap_open}&gap_extend=${gap_extend}&weight_mode=${mode}`, function(data, status){
 
-        console.log(data);
+        if(data.muscle_error==='error'){
+            
+            M.toast({html: `Error with MUSCLE exe</br> Please make sure you only have</br> the 'muscle_exe_file' in the 'muscle directory'`})
+        }
 
         var score = data.score;
         alignment_1 = data.alignment[0];
-        alignment_2 = data.alignment[1];
-        
-        
+        alignment_2 = data.alignment[1];                
 
         ele.innerHTML = ele.innerHTML = `<h4 style="text-align:center; margin-top:5%;">Trascript Similarity Score : ${data.score}</h4>` + pretty_format(alignment_1, alignment_2, transcript_scoring);
         
@@ -368,6 +352,7 @@ function get_transcript_similarity(){
 
 }
 
+
 function get_splice_site_similarity(){
 
     var ele = document.getElementById("tab_splice_site");
@@ -375,15 +360,9 @@ function get_splice_site_similarity(){
     ele.innerHTML = '';    
     
     $.get(`http://127.0.0.1:5000/get_splice_site_similarity?transcript1_id=${transcript1_id}&transcript2_id=${transcript2_id}&exon1_id=${exon1_id}&exon2_id=${exon2_id}&match_score=${match_score}&mismatch_penalty=${mismatch_penalty}&gap_open=${gap_open}&gap_extend=${gap_extend}`, function(data, status){
-
-        console.log(data);
-
+        
         alignment_1 = data.alignment[0];
         alignment_2 = data.alignment[1];
-        
-        
-
-        //ele.innerHTML = `<p>${alignment_1}</p><p>${alignment_2}</p>`;
 
         ele.innerHTML = `<h4 style="text-align:center; margin-top:5%;">Splice Site Similarity Score : ${data.score}</h4>` + pretty_format(alignment_1, alignment_2, transcript_scoring);
         
@@ -394,19 +373,18 @@ function get_splice_site_similarity(){
 }
 
 
-
 function clear_modal_line(){
 
     return;
     var ele = document.getElementById("tabs");
-    
-    
+        
     ele.innerHTML = `<ul class="tabs">
                             <li class="tab col s4" onclick="get_splice_site_similarity()"><a href="#tab_splice_site">Splice Site Similarity</a></li>
                             <li class="tab col s4" onshow=""><a href="#tab_transcript">Transcript Similarity</a></li>
                             <li class="tab col s4" onclick="get_protein_similarity()"><a href="#tab_protein">Protein Similarity</a></li>                    
                      </ul>`;
 }
+
 
 function color_map(val,maxx,minn){
 
@@ -416,10 +394,10 @@ function color_map(val,maxx,minn){
     var green = Math.round(83 + ( ( (231-83) * (val-minn) ) / delta )) ;
     var blue = Math.round(79 + ( ( (120-79) * (val-minn) ) / delta )) ;
 
-
     return `rgb(${red},${green},${blue})`;
     
 }
+
 
 function pretty_format(line1, line2, scoring){
 
@@ -435,8 +413,7 @@ function pretty_format(line1, line2, scoring){
     var tr = "";
 
     for(var i=0;i<Math.ceil(len/chars_in_line); i++){
-        
-        
+                
         tr = "<tr>";
         
         for(var j=0; j < chars_in_line; j++){
@@ -476,7 +453,6 @@ function pretty_format(line1, line2, scoring){
                 score = scoring[line2[i*chars_in_line+j]][line1[i*chars_in_line+j]];
             }
 
-
             tr +=  `<td class="col s1 tooltipped" data-position="top" data-tooltip="${score}" style="background-color:${color_map(score,maxx,minn)}">${line2[i*chars_in_line+j]}</td>`
         }
 
@@ -499,10 +475,6 @@ function pretty_format(line1, line2, scoring){
     }
 
     table += "</tbody></table>";
-
-    
-    
-
 
     return table;
 
