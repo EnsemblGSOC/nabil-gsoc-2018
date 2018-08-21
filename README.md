@@ -70,7 +70,7 @@ To use MUSCLE, you would first need to download the appropriate exe file for you
 
 Next you would need to put the exe file in the **'muscle'** directory.
 
-Please make sure no other file is present in the **'muscle'** directory (the README.md file is ok, but nothing else).
+Please make sure no other extra file is present in the **'muscle'** directory (the README.md file should stay, but nothing else).
 
 
 ## Data 
