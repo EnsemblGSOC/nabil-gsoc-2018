@@ -68,8 +68,9 @@ $ sudo ./setup.sh
 
 To use MUSCLE, you would first need to download the appropriate exe file for your platform from [here](https://www.drive5.com/muscle/downloads.htm). 
 
-Next you would need to specify the path to the exe file in the following text file : 
-    exon_alignments/muscle_path.txt
+Next you would need to put the exe file in the **'muscle'** directory.
+
+Please make sure no other file is present in the **'muscle'** directory (the README.md file is ok, but nothing else).
 
 
 ## Data 
